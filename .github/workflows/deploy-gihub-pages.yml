@@ -1,0 +1,31 @@
+name: Deploy HTML to main branch
+run-name: ${{ github.actor }} is building the HTML
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  Build-and-Deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.6"]
+    steps:
+      - name: Install packages with pip
+      - run: pip install --upgrade pip
+      - run: pip install -r requirements.txt
+
+    steps:
+      - name: Build HTML
+      - run: set -e
+      - run: cd doc
+      - run: make html
+
+    steps:
+      - name: Deploy HTML
+      - run: cd ..
+      - run: git checkout master
+      - run: cp -r doc/_build/html/* .
+      - run: rm -rf doc
+      - run: echo "Deploy here!"
